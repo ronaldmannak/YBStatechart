@@ -1,0 +1,402 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		102591AA1521143200B11680 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 102591A91521143200B11680 /* Foundation.framework */; };
+		102591B01521143200B11680 /* YBStatechart.m in Sources */ = {isa = PBXBuildFile; fileRef = 102591AF1521143200B11680 /* YBStatechart.m */; };
+		102591B81521143200B11680 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 102591B71521143200B11680 /* SenTestingKit.framework */; };
+		102591BA1521143200B11680 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 102591B91521143200B11680 /* UIKit.framework */; };
+		102591BB1521143200B11680 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 102591A91521143200B11680 /* Foundation.framework */; };
+		102591BE1521143200B11680 /* libYBStatechart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 102591A61521143200B11680 /* libYBStatechart.a */; };
+		102591C41521143200B11680 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 102591C21521143200B11680 /* InfoPlist.strings */; };
+		102591C71521143200B11680 /* YBStatechartTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 102591C61521143200B11680 /* YBStatechartTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		102591BC1521143200B11680 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1025919D1521143200B11680 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 102591A51521143200B11680;
+			remoteInfo = YBStatechart;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		102591A61521143200B11680 /* libYBStatechart.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libYBStatechart.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		102591A91521143200B11680 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		102591AD1521143200B11680 /* YBStatechart-Prefix.pch */ = {isa = PBXFileReference; path = "YBStatechart-Prefix.pch"; sourceTree = "<group>"; };
+		102591AE1521143200B11680 /* YBStatechart.h */ = {isa = PBXFileReference; path = YBStatechart.h; sourceTree = "<group>"; };
+		102591AF1521143200B11680 /* YBStatechart.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YBStatechart.m; sourceTree = "<group>"; };
+		102591B61521143200B11680 /* YBStatechartTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YBStatechartTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		102591B71521143200B11680 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		102591B91521143200B11680 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		102591C11521143200B11680 /* YBStatechartTests-Info.plist */ = {isa = PBXFileReference; path = "YBStatechartTests-Info.plist"; sourceTree = "<group>"; };
+		102591C31521143200B11680 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		102591C51521143200B11680 /* YBStatechartTests.h */ = {isa = PBXFileReference; path = YBStatechartTests.h; sourceTree = "<group>"; };
+		102591C61521143200B11680 /* YBStatechartTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YBStatechartTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		102591A31521143200B11680 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				102591AA1521143200B11680 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		102591B21521143200B11680 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				102591B81521143200B11680 /* SenTestingKit.framework in Frameworks */,
+				102591BA1521143200B11680 /* UIKit.framework in Frameworks */,
+				102591BB1521143200B11680 /* Foundation.framework in Frameworks */,
+				102591BE1521143200B11680 /* libYBStatechart.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1025919B1521143200B11680 = {
+			isa = PBXGroup;
+			children = (
+				102591AB1521143200B11680 /* YBStatechart */,
+				102591BF1521143200B11680 /* YBStatechartTests */,
+				102591A81521143200B11680 /* Frameworks */,
+				102591A71521143200B11680 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		102591A71521143200B11680 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				102591A61521143200B11680 /* libYBStatechart.a */,
+				102591B61521143200B11680 /* YBStatechartTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		102591A81521143200B11680 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				102591A91521143200B11680 /* Foundation.framework */,
+				102591B71521143200B11680 /* SenTestingKit.framework */,
+				102591B91521143200B11680 /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		102591AB1521143200B11680 /* YBStatechart */ = {
+			isa = PBXGroup;
+			children = (
+				102591AE1521143200B11680 /* YBStatechart.h */,
+				102591AF1521143200B11680 /* YBStatechart.m */,
+				102591AC1521143200B11680 /* Supporting Files */,
+			);
+			path = YBStatechart;
+			sourceTree = "<group>";
+		};
+		102591AC1521143200B11680 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				102591AD1521143200B11680 /* YBStatechart-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		102591BF1521143200B11680 /* YBStatechartTests */ = {
+			isa = PBXGroup;
+			children = (
+				102591C51521143200B11680 /* YBStatechartTests.h */,
+				102591C61521143200B11680 /* YBStatechartTests.m */,
+				102591C01521143200B11680 /* Supporting Files */,
+			);
+			path = YBStatechartTests;
+			sourceTree = "<group>";
+		};
+		102591C01521143200B11680 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				102591C11521143200B11680 /* YBStatechartTests-Info.plist */,
+				102591C21521143200B11680 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		102591A41521143200B11680 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		102591A51521143200B11680 /* YBStatechart */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 102591CA1521143200B11680 /* Build configuration list for PBXNativeTarget "YBStatechart" */;
+			buildPhases = (
+				102591A21521143200B11680 /* Sources */,
+				102591A31521143200B11680 /* Frameworks */,
+				102591A41521143200B11680 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = YBStatechart;
+			productName = YBStatechart;
+			productReference = 102591A61521143200B11680 /* libYBStatechart.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		102591B51521143200B11680 /* YBStatechartTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 102591CD1521143200B11680 /* Build configuration list for PBXNativeTarget "YBStatechartTests" */;
+			buildPhases = (
+				102591B11521143200B11680 /* Sources */,
+				102591B21521143200B11680 /* Frameworks */,
+				102591B31521143200B11680 /* Resources */,
+				102591B41521143200B11680 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				102591BD1521143200B11680 /* PBXTargetDependency */,
+			);
+			name = YBStatechartTests;
+			productName = YBStatechartTests;
+			productReference = 102591B61521143200B11680 /* YBStatechartTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1025919D1521143200B11680 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0440;
+			};
+			buildConfigurationList = 102591A01521143200B11680 /* Build configuration list for PBXProject "YBStatechart" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 1025919B1521143200B11680;
+			productRefGroup = 102591A71521143200B11680 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				102591A51521143200B11680 /* YBStatechart */,
+				102591B51521143200B11680 /* YBStatechartTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		102591B31521143200B11680 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				102591C41521143200B11680 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		102591B41521143200B11680 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		102591A21521143200B11680 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				102591B01521143200B11680 /* YBStatechart.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		102591B11521143200B11680 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				102591C71521143200B11680 /* YBStatechartTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		102591BD1521143200B11680 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 102591A51521143200B11680 /* YBStatechart */;
+			targetProxy = 102591BC1521143200B11680 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		102591C21521143200B11680 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				102591C31521143200B11680 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		102591C81521143200B11680 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		102591C91521143200B11680 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		102591CB1521143200B11680 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/YBStatechart.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "YBStatechart/YBStatechart-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		102591CC1521143200B11680 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/YBStatechart.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "YBStatechart/YBStatechart-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		102591CE1521143200B11680 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "YBStatechart/YBStatechart-Prefix.pch";
+				INFOPLIST_FILE = "YBStatechartTests/YBStatechartTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		102591CF1521143200B11680 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "YBStatechart/YBStatechart-Prefix.pch";
+				INFOPLIST_FILE = "YBStatechartTests/YBStatechartTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		102591A01521143200B11680 /* Build configuration list for PBXProject "YBStatechart" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				102591C81521143200B11680 /* Debug */,
+				102591C91521143200B11680 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		102591CA1521143200B11680 /* Build configuration list for PBXNativeTarget "YBStatechart" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				102591CB1521143200B11680 /* Debug */,
+				102591CC1521143200B11680 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		102591CD1521143200B11680 /* Build configuration list for PBXNativeTarget "YBStatechartTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				102591CE1521143200B11680 /* Debug */,
+				102591CF1521143200B11680 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1025919D1521143200B11680 /* Project object */;
+}
