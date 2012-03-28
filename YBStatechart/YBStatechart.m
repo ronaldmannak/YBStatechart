@@ -3,11 +3,352 @@
 //  YBStatechart
 //
 //  Created by Martijn Thé on 3/26/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 Yobble. All rights reserved.
 //
 
 #import "YBStatechart.h"
+#import <objc/runtime.h>
+
+NSString *YBStateEnterStateEvent = @"enterState";
+NSString *YBStateExitStateEvent = @"exitState";
+
+@interface YBStatechart () {
+    @package
+    __strong YBState *_rootState;
+    __strong NSMutableDictionary *_registeredStates;
+    BOOL _isActive;
+}
+@end
+
+@interface YBState () {
+    @package
+    __strong NSString *_name;
+    __strong NSString *_historyKey;
+    __strong NSSet *_substates;
+    __strong YBState *_superstate;
+    __weak YBStatechart *_statechart;
+    __strong NSMutableDictionary *_eventHandlers;
+    BOOL _substatesAreOrthogonal;
+    BOOL _active;
+    BOOL _useHistory;
+}
+- (void)setStatechart:(YBStatechart*)statechart;
+- (void)activateDefaultSubstatesRecursive:(BOOL)recursive saveToHistory:(BOOL)saveToHistory;
+- (void)activateSubstate:(YBState*)substate saveToHistory:(BOOL)saveToHistory;
+- (void)deactivateSubstatesExcept:(YBState*)exceptSubstate recursive:(BOOL)recursive;
+#if DEBUG
+- (BOOL)debugValidate;
+#endif
+@end
+
+
+
+
 
 @implementation YBStatechart
 
+- (id)init {
+    self = [super init];
+    if (self) {
+        _registeredStates = [NSMutableDictionary dictionary];
+    }
+    return self;
+}
+
+#if DEBUG
+- (BOOL)debugValidate {
+    if (_rootState == nil) {
+        NSLog(@"No rootState set!");
+        return NO;
+    }
+    return [_rootState debugValidate];
+}
+#endif
+
+- (void)activate {
+    NSAssert(_rootState != nil, @"No rootState set.");
+#if DEBUG
+    BOOL valid = [self debugValidate];
+    if (valid) {
+        [self activateState:_rootState];
+        _isActive = YES;
+    }
+#else
+    [self activateState:_rootState];
+    _isActivated = YES;
+#endif
+}
+
+- (void)setRootState:(YBState *)rootState {
+    if (rootState == _rootState) {
+        return;
+    }
+    _rootState = rootState;
+    [_rootState setStatechart:self];
+    
+    // todo: deactivate?
+}
+
+- (void)registerState:(YBState *)state {
+    NSAssert([_registeredStates objectForKey:state.name] == nil || [_registeredStates objectForKey:state.name] == state, @"State names need to be unique within one statechart");
+    [_registeredStates setObject:state forKey:state.name];
+}
+
+- (YBState*)findStateWithName:(NSString*)stateName {
+    return [_registeredStates objectForKey:stateName];
+}
+
+- (void)activateStateWithName:(NSString*)stateName {
+    [self activateStateWithName:stateName saveToHistory:YES];
+}
+
+- (void)activateStateWithName:(NSString*)stateName saveToHistory:(BOOL)saveToHistory {
+    YBState *state = [self findStateWithName:stateName];
+    NSAssert(state != nil, @"Couldn't find state with name: %@", stateName);
+    [self activateState:state saveToHistory:saveToHistory];
+}
+
+- (void)activateState:(YBState*)state {
+    [self activateState:state saveToHistory:YES];
+}
+
+- (void)activateState:(YBState*)state saveToHistory:(BOOL)saveToHistory {
+    // Traverse the graph down to the root of the tree:
+    YBState *downState = state;
+    while (downState != nil) {
+        [downState->_superstate activateSubstate:downState saveToHistory:saveToHistory];
+        downState = downState->_superstate;
+    }
+    // Traverse the graph up the leaves of the tree:
+    [state activateDefaultSubstatesRecursive:YES saveToHistory:saveToHistory];
+}
+
+@synthesize isActive = _isActive;
+@synthesize rootState = _rootState;
+@end
+
+
+
+
+
+@implementation YBState 
+
++ (id)stateWithName:(NSString*)name {
+    return [[self alloc] initWithName:name];
+}
+
+- (id)initWithName:(NSString*)name {
+    NSAssert(name.length != 0, @"Cannot create state without a name");
+    NSAssert([name rangeOfString:@"."].length == 0, @"Cannot create a state name containing a dot character (.)");
+    self = [super init];
+    if (self) {
+        _name = name;
+        _historyKey = [@"YBStateHistory_" stringByAppendingString:_name];
+        _substates = [NSSet set];
+    }
+    return self;
+}
+
+#if DEBUG
+- (BOOL)debugValidate {
+    if ([_substates count] > 1) {
+        __block BOOL validates = YES;
+        if (_substatesAreOrthogonal == NO && _initialSubstate == nil) {
+            NSLog(@"No initial substate is set for state `%@` while there are multiple non-orthogonal substates.", _name);
+            validates = NO;
+        }
+        [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *substate, BOOL *stop) {
+            if ([substate debugValidate] == NO) {
+                validates = NO;
+            }
+        }];
+        return validates;
+    } else if ([_substates count] == 1) {
+        NSLog(@"There is only one substate for state `%@`. You might want to consider merging `%@` with it's superstate `%@`", _name, [[_substates anyObject] name], _name);
+        return [[_substates anyObject] debugValidate];
+    }
+    return YES;
+}
+#endif
+
+- (void)on:(NSString*)event doBlock:(YBStateEventHandler)handler {
+    NSParameterAssert(event != nil);
+    if (handler) {
+        [_eventHandlers setObject:handler forKey:event];
+    } else {
+        [self removeHandlerForEvent:event];
+    }
+}
+
+- (void)onEnterState:(YBStateEventHandler)handler {
+    [self on:YBStateEnterStateEvent doBlock:handler];
+}
+
+- (void)onExitState:(YBStateEventHandler)handler {
+    [self on:YBStateExitStateEvent doBlock:handler];
+}
+
+- (void)removeHandlerForEvent:(NSString*)event {
+    NSAssert(event != nil, @"Event name cannot be nil");
+    [_eventHandlers removeObjectForKey:event];
+}
+
+- (void)addSubstate:(YBState*)substate {
+    if (substate == self) {
+        // can't do recursion!
+        return;
+    }
+    _substates = [_substates setByAddingObject:substate];
+    substate->_superstate = self;
+    [substate setStatechart:_statechart];
+}
+
+- (NSString*)path {
+    if (_superstate == nil) {
+        return _name;
+    } else {
+        // todo: maybe cache this if called a lot
+        return [[[_superstate path] stringByAppendingString:@"."] stringByAppendingString:_name];
+    }
+}
+
+- (YBState*)substateWithName:(NSString*)stateName {
+    __block YBState *foundSubstate = nil;
+    [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *substate, BOOL *stop) {
+        if ([[substate name] isEqualToString:stateName]) {
+            foundSubstate = substate;
+            *stop = YES;
+        }
+    }];
+    return foundSubstate;
+}
+
+- (void)setHistorySubstate:(YBState *)historySubstate {
+    if (historySubstate == self) {
+        // can't do recursion!
+        return;
+    }
+    // Add implicitely to self.substates if not already added:
+    if (historySubstate != nil && [_substates containsObject:historySubstate] == NO) {
+        [self addSubstate:historySubstate];
+    }
+    if (historySubstate != nil) {
+        [[NSUserDefaults standardUserDefaults] setValue:historySubstate.name forKey:_historyKey];
+    } else {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:_historyKey];
+    }
+}
+
+- (YBState*)historySubstate {
+    NSString *substateName = [[NSUserDefaults standardUserDefaults] valueForKey:_historyKey];
+    if (substateName.length == 0) {
+        return nil;
+    } else {
+        return [self substateWithName:substateName];
+    }
+}
+
+- (void)setInitialSubstate:(YBState *)initialSubstate {
+    if (initialSubstate == self) {
+        // can't do recursion!
+        return;
+    }
+    // Add implicitely to self.substates if not already added:
+    if (initialSubstate != nil && [_substates containsObject:initialSubstate] == NO) {
+        [self addSubstate:initialSubstate];
+    }
+    _initialSubstate = initialSubstate;
+}
+
+// Private
+- (void)setStatechart:(YBStatechart*)statechart {
+    _statechart = statechart;
+    [_statechart registerState:self];
+    [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *substate, BOOL *stop) {
+        [substate setStatechart:statechart];
+    }];
+}
+
+- (void)deactivateSubstatesExcept:(YBState*)exceptSubstate recursive:(BOOL)recursive {
+    if ([_substates count] == 0) {
+        return;
+    } else {
+        [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *otherSubstate, BOOL *stop) {
+            if (otherSubstate != exceptSubstate) {
+                otherSubstate->_active = NO;
+                [otherSubstate handleEvent:YBStateExitStateEvent];
+                [otherSubstate deactivateSubstatesExcept:nil recursive:recursive];
+            }
+        }];
+    }
+}
+
+- (void)activateDefaultSubstatesRecursive:(BOOL)recursive saveToHistory:(BOOL)saveToHistory {
+    if ([_substates count] == 0) {
+        return;
+    } else if ([_substates count] == 1) {
+        [self activateSubstate:[_substates anyObject] saveToHistory:saveToHistory];
+    } else {
+        if (_substatesAreOrthogonal == NO) {
+            // Figure out which substate to activate:
+            YBState *defaultSubstate = nil;
+            if (_useHistory) {
+                defaultSubstate = [self historySubstate];
+            }
+            if (defaultSubstate == nil) {
+                defaultSubstate = [self initialSubstate];
+                NSAssert(defaultSubstate != nil, @"There is no initialSubstate set on `%@`. The statechart is not fully-defined!", _name);
+            }
+            [self activateSubstate:defaultSubstate saveToHistory:saveToHistory];
+            if (recursive) {
+                [defaultSubstate activateDefaultSubstatesRecursive:recursive saveToHistory:saveToHistory]; // recurse
+            }
+        } else {
+            // Activate all substates (they're orthogonal):
+            [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *substate, BOOL *stop) {
+                [self activateSubstate:substate saveToHistory:saveToHistory];
+                if (recursive) {
+                    [substate activateDefaultSubstatesRecursive:recursive saveToHistory:saveToHistory];
+                }
+            }];
+        }
+    }
+}
+
+- (void)activateSubstate:(YBState*)substate saveToHistory:(BOOL)saveToHistory {
+    NSAssert([_substates containsObject:substate], @"State `%@` does not contain substate `%@`", _name, substate.name);
+    if (substate->_active) {
+        return;
+    } else {
+        if (_substatesAreOrthogonal) {
+            [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *otherSubstate, BOOL *stop) {
+                otherSubstate->_active = YES;
+                [otherSubstate handleEvent:YBStateEnterStateEvent];
+            }];
+        } else {
+            [self deactivateSubstatesExcept:substate recursive:YES];
+            if (saveToHistory) {
+                [self setHistorySubstate:substate];
+            }
+            substate->_active = YES;
+            [substate handleEvent:YBStateEnterStateEvent];
+        }
+    }
+}
+
+- (void)handleEvent:(NSString*)event {
+    // todo
+}
+
+- (NSString*)description {
+    return [NSString stringWithFormat:@"<%@ %p: `%@`, %i substates, statechart=%p, superstate=%p, path=%@>", [self class], self, _name, [_substates count], _statechart, _superstate, [self path]];
+}
+
+@synthesize name = _name;
+@synthesize substates = _substates;
+@synthesize superstate = _superstate;
+@synthesize statechart = _statechart;
+@synthesize isActive = _active;
+@synthesize substatesAreOrthogonal = _substatesAreOrthogonal;
+@synthesize useHistory = _useHistory;
 @end
