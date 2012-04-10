@@ -337,7 +337,10 @@ NSString *YBStateExitStateEvent = @"exitState";
 }
 
 - (void)handleEvent:(NSString*)event {
-    // todo
+    YBStateEventHandler handler = [_eventHandlers objectForKey:event];
+    if (handler) {
+        handler(_statechart);
+    }
 }
 
 - (NSString*)description {
