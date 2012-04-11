@@ -25,7 +25,7 @@ NSString *YBStateExitStateEvent = @"exitState";
     __strong NSString *_name;
     __strong NSString *_historyKey;
     __strong NSSet *_substates;
-    __strong YBState *_superstate;
+    __weak YBState *_superstate;
     __weak YBStatechart *_statechart;
     __strong NSMutableDictionary *_eventHandlers;
     BOOL _substatesAreOrthogonal;
@@ -33,9 +33,12 @@ NSString *YBStateExitStateEvent = @"exitState";
     BOOL _useHistory;
 }
 - (void)setStatechart:(YBStatechart*)statechart;
+- (void)activate;
 - (void)activateDefaultSubstatesRecursive:(BOOL)recursive saveToHistory:(BOOL)saveToHistory;
 - (void)activateSubstate:(YBState*)substate saveToHistory:(BOOL)saveToHistory;
+- (void)deactivate;
 - (void)deactivateSubstatesExcept:(YBState*)exceptSubstate recursive:(BOOL)recursive;
+- (void)handleEventAndDispatchToActiveSubstates:(NSString*)event;
 #if DEBUG
 - (BOOL)debugValidate;
 #endif
@@ -46,6 +49,10 @@ NSString *YBStateExitStateEvent = @"exitState";
 
 
 @implementation YBStatechart
+
+//- (void)dealloc {
+//    NSLog(@"dealloc statechart <%p>", self);
+//}
 
 - (id)init {
     self = [super init];
@@ -65,18 +72,29 @@ NSString *YBStateExitStateEvent = @"exitState";
 }
 #endif
 
+- (void)deactivate {
+    NSAssert(_rootState != nil, @"No rootState set.");
+#if DEBUG
+    BOOL valid = [self debugValidate];
+    if (valid)
+#endif
+    {
+        [_rootState deactivate];
+        [_rootState deactivateSubstatesExcept:nil recursive:YES];
+        _isActive = NO;
+    }
+}
+
 - (void)activate {
     NSAssert(_rootState != nil, @"No rootState set.");
 #if DEBUG
     BOOL valid = [self debugValidate];
-    if (valid) {
+    if (valid)
+#endif
+    {
         [self activateState:_rootState];
         _isActive = YES;
     }
-#else
-    [self activateState:_rootState];
-    _isActivated = YES;
-#endif
 }
 
 - (void)setRootState:(YBState *)rootState {
@@ -116,11 +134,43 @@ NSString *YBStateExitStateEvent = @"exitState";
     // Traverse the graph down to the root of the tree:
     YBState *downState = state;
     while (downState != nil) {
-        [downState->_superstate activateSubstate:downState saveToHistory:saveToHistory];
+        if (downState->_superstate) {
+            [downState->_superstate activateSubstate:downState saveToHistory:saveToHistory];
+        } else { // rootState doesn't have a superstate
+            [downState activate];
+        }
         downState = downState->_superstate;
     }
     // Traverse the graph up the leaves of the tree:
     [state activateDefaultSubstatesRecursive:YES saveToHistory:saveToHistory];
+}
+
+- (void)dispatchEvent:(NSString*)event {
+    NSAssert(_rootState != nil, @"No rootState set.");
+    [_rootState handleEventAndDispatchToActiveSubstates:event];
+}
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
+    if ([self respondsToSelector:aSelector]) {
+        return [super methodSignatureForSelector:aSelector];
+    } else {
+        NSString *methodName = NSStringFromSelector(aSelector);
+        if ([methodName rangeOfString:@":"].length == 0) { // is there another way to test for existence of arguments in a SEL?
+            return [NSMethodSignature signatureWithObjCTypes:"v@:"];
+        } else {
+            return [super methodSignatureForSelector:aSelector];
+        }
+    }
+}
+
+- (void)forwardInvocation:(NSInvocation *)anInvocation {
+    SEL selector = [anInvocation selector];
+    NSMethodSignature *signature = [anInvocation methodSignature];
+    if ([signature numberOfArguments] == 2 /* No arguments */) {
+        [self dispatchEvent:NSStringFromSelector(selector)];
+    } else {
+        [super forwardInvocation:anInvocation];
+    }
 }
 
 @synthesize isActive = _isActive;
@@ -132,6 +182,10 @@ NSString *YBStateExitStateEvent = @"exitState";
 
 
 @implementation YBState 
+
+//- (void)dealloc {
+//    NSLog(@"dealloc %@", _name);
+//}
 
 + (id)stateWithName:(NSString*)name {
     return [[self alloc] initWithName:name];
@@ -145,6 +199,7 @@ NSString *YBStateExitStateEvent = @"exitState";
         _name = name;
         _historyKey = [@"YBStateHistory_" stringByAppendingString:_name];
         _substates = [NSSet set];
+        _eventHandlers = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -196,6 +251,13 @@ NSString *YBStateExitStateEvent = @"exitState";
 - (void)addSubstate:(YBState*)substate {
     if (substate == self) {
         // can't do recursion!
+        return;
+    }
+    if (substate->_superstate) {
+        if (substate->_superstate != self) {
+            // state is already a substate of another state
+            [NSException raise:@"State is already a substate of another state" format:@"Superstate: %@", [substate->_superstate name]];
+        }
         return;
     }
     _substates = [_substates setByAddingObject:substate];
@@ -275,8 +337,7 @@ NSString *YBStateExitStateEvent = @"exitState";
     } else {
         [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *otherSubstate, BOOL *stop) {
             if (otherSubstate != exceptSubstate) {
-                otherSubstate->_active = NO;
-                [otherSubstate handleEvent:YBStateExitStateEvent];
+                [otherSubstate deactivate];
                 [otherSubstate deactivateSubstatesExcept:nil recursive:recursive];
             }
         }];
@@ -315,6 +376,20 @@ NSString *YBStateExitStateEvent = @"exitState";
     }
 }
 
+- (void)deactivate {
+    if (_active == YES) {
+        _active = NO;
+        [self handleEvent:YBStateExitStateEvent];
+    }
+}
+
+- (void)activate {
+    if (_active == NO) {
+        _active = YES;
+        [self handleEvent:YBStateEnterStateEvent];
+    }
+}
+
 - (void)activateSubstate:(YBState*)substate saveToHistory:(BOOL)saveToHistory {
     NSAssert([_substates containsObject:substate], @"State `%@` does not contain substate `%@`", _name, substate.name);
     if (substate->_active) {
@@ -322,24 +397,38 @@ NSString *YBStateExitStateEvent = @"exitState";
     } else {
         if (_substatesAreOrthogonal) {
             [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *otherSubstate, BOOL *stop) {
-                otherSubstate->_active = YES;
-                [otherSubstate handleEvent:YBStateEnterStateEvent];
+                [otherSubstate activate];
             }];
         } else {
             [self deactivateSubstatesExcept:substate recursive:YES];
             if (saveToHistory) {
                 [self setHistorySubstate:substate];
             }
-            substate->_active = YES;
-            [substate handleEvent:YBStateEnterStateEvent];
+            [substate activate];
         }
+    }
+}
+
+- (void)handleEventAndDispatchToActiveSubstates:(NSString*)event {
+    [self handleEvent:event];
+    
+    if ([_substates count] == 0) {
+        return;
+    } else if ([_substates count] == 1) {
+        [[_substates anyObject] handleEventAndDispatchToActiveSubstates:event];
+    } else {
+        [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *substate, BOOL *stop) {
+            if (substate->_active) {
+                [substate handleEventAndDispatchToActiveSubstates:event];
+            }
+        }];
     }
 }
 
 - (void)handleEvent:(NSString*)event {
     YBStateEventHandler handler = [_eventHandlers objectForKey:event];
     if (handler) {
-        handler(_statechart);
+        handler(self);
     }
 }
 

@@ -95,6 +95,7 @@
     // State 1 has 2 substates + history:
     YBState *substate1 = [YBState stateWithName:@"1"];
     substate1.useHistory = YES;
+    [substate1 setHistorySubstate:nil]; // clear history
     YBState *substate1_1 = [YBState stateWithName:@"1_1"];
     YBState *substate1_2 = [YBState stateWithName:@"1_2"];
     [substate1 addSubstate:substate1_1];
@@ -130,6 +131,7 @@
     
     // Test initial activations:
     [statechart activate];
+    STAssertTrue(rootState.isActive == YES, nil);
     STAssertTrue(statechart.isActive == YES, nil);
     STAssertTrue(substate1.isActive == YES, nil);
     STAssertTrue(substate1_1.isActive == YES, nil);
@@ -193,25 +195,60 @@
     STAssertTrue(substate2_2_2.isActive == NO, nil);
 }
 
-- (void)testExample {
+- (void)testChartDispatchDirect {
+    __block BOOL didButtonDown = NO;
+    STAssertTrue(didButtonDown == NO, nil);
+    YBStatechart *statechart = [[YBStatechart alloc] init];
+    YBState *rootState = [YBState stateWithName:@"rootState"];
+    [rootState on:@"buttonDown" doBlock:^(YBState *_self) {
+        didButtonDown = YES;
+    }];
     
+    [statechart setRootState:rootState];
+    [statechart performSelector:@selector(buttonDown)];
+    STAssertTrue(didButtonDown == YES, nil);
+}
+
+- (void)testNestedDispatch {
     YBState *loggedOut = [YBState stateWithName:@"loggedOut"];
     YBState *loggedIn = [YBState stateWithName:@"loggedIn"];
     YBState *rootState = [YBState stateWithName:@"rootState"];
+    NSMutableSet *enterSet = [NSMutableSet set];
+    NSMutableSet *exitSet = [NSMutableSet set];
+    NSMutableSet *eventSet = [NSMutableSet set];
+    
+    id enterHandler = ^(YBState *_self){
+        [enterSet addObject:_self];
+    };
+    
+    id exitHandler = ^(YBState *_self){
+        [exitSet addObject:_self];
+    };
+    
+    id eventHandler = ^(YBState *_self){
+        [eventSet addObject:_self];
+    };
+    
+    [rootState onEnterState:enterHandler];
+    [loggedIn onEnterState:enterHandler];
+    [loggedOut onEnterState:enterHandler];
 
-    [rootState on:@"enterState" doBlock:^(YBStatechart *statechart){
-//        [statechart gotoStateNamed:@"loggedOut"];
-    }];
+    [rootState onExitState:exitHandler];
+    [loggedIn onExitState:exitHandler];
+    [loggedOut onExitState:exitHandler];
     
-    /*
-    [rootState onEnterState:^{
-        
-    }];
+    [rootState on:@"up" doBlock:eventHandler];
+    [loggedIn on:@"up" doBlock:eventHandler];
+    [loggedOut on:@"up" doBlock:eventHandler];
     
-    [rootState onExitState:^{
-        
+    [rootState on:@"toggle" doBlock:^(YBState *_self) {
+        YBStatechart *statechart = _self.statechart;
+        if (loggedIn.isActive) {
+            [statechart activateState:loggedOut];
+        } else {
+            [statechart activateState:loggedIn];
+        }
     }];
-    */
     
     rootState.initialSubstate = loggedOut;
     [rootState addSubstate:loggedOut];
@@ -219,6 +256,32 @@
     
     YBStatechart *statechart = [[YBStatechart alloc] init];
     statechart.rootState = rootState;
+    [statechart activate];
+    
+    STAssertTrue([enterSet containsObject:rootState] == YES, nil);
+    STAssertTrue([enterSet containsObject:loggedOut] == YES, nil); // initial substate of rootState
+    STAssertTrue([enterSet containsObject:loggedIn] == NO, nil);
+    STAssertTrue([exitSet count] == 0, nil);
+    
+    [statechart performSelector:@selector(up)];
+    STAssertTrue([eventSet containsObject:rootState] == YES, nil);
+    STAssertTrue([eventSet containsObject:loggedOut] == YES, nil);
+    STAssertTrue([eventSet containsObject:loggedIn] == NO, nil);
+
+    [statechart performSelector:@selector(toggle)];
+    STAssertTrue([enterSet containsObject:loggedIn] == YES, nil);
+    STAssertTrue([exitSet containsObject:loggedOut] == YES, nil);
+
+    [statechart performSelector:@selector(up)];
+    STAssertTrue([eventSet containsObject:loggedIn] == YES, nil);
+    
+    [statechart deactivate];
+    STAssertTrue([exitSet count] == 3, nil);
+    
+    // Break retain cycles (the states are retained by the sets, which are used/retained inside the handlers blocks, which are retained by the states):
+    [enterSet removeAllObjects];
+    [exitSet removeAllObjects];
+    [eventSet removeAllObjects];
 }
 
 @end

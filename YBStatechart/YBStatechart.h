@@ -14,10 +14,29 @@
 extern NSString *YBStateEnterStateEvent;
 extern NSString *YBStateExitStateEvent;
 
-typedef void(^YBStateEventHandler)(YBStatechart *statechart);
+/**
+	The block type used as event handler in a YBState object.
+    The state object itself is passed to the block as the first argument.
+	@param _self : The state object to which the handler belongs.
+ */
+typedef void(^YBStateEventHandler)(YBState *_self);
 
 
 
+/**
+	Statecharts are represented using instances of YBStatechart.
+    For more information on statecharts, see David Harel's white paper from 1986:
+    http://www.wisdom.weizmann.ac.il/~harel/SCANNED.PAPERS/Statecharts.pdf
+ 
+    A statechart object contains one rootState, which acts as an encapsulation for other substates (which can in turn have other substates
+    as well). A YBStatechart instance plays the central role of activating a particular state and ensuring the appropriate sibling-,
+    sub- and super- states get activated and deactivated.
+ 
+    Another important role is the dispatch of events, @see -dispatchEvent:
+    When an unknown selector (with no arguments) gets sent to a statechart, it will use the selector name and use that as an event to
+    dispatch it to the states in the chart. Because of this behaviour, statechart objects can be used conveniently in combination with
+    target-selector style objects (e.g. UIButton).
+ */
 @interface YBStatechart : NSObject
 
 /**
@@ -34,7 +53,7 @@ typedef void(^YBStateEventHandler)(YBStatechart *statechart);
 - (YBState*)findStateWithName:(NSString*)stateName;
 
 /**
-    Methods to activate a given state, other by passing in the state object itself or by passing in the name of the state.
+    Methods to activate a given state in the statechart, either by passing in the state object itself or by passing in the name of the state.
     By default, automatic setting the historySubstate is enabled, but can be disabled using the saveToHistory argument.
  */
 - (void)activateStateWithName:(NSString*)stateName;
@@ -49,9 +68,23 @@ typedef void(^YBStateEventHandler)(YBStatechart *statechart);
 - (void)activate;
 
 /**
+    Deactivates the statechart. The rootState and all active substates branches will be exited/deactivated.
+    @see isActive
+ */
+- (void)deactivate;
+
+/**
 	Returns YES if the statechart is active or NO is it is inactive.
  */
 @property (nonatomic, assign, readonly) BOOL isActive;
+
+/**
+	Dispatches the given event to the active states in the statechart, causing the registered handlers to get called.
+    This method will also be called when an unknown message with no arguments and void return type is sent to a statechart, e.g.:
+    Sending [statechart buttonUp] will result in [statechart dispatchEvent:@"buttonUp"].
+	@param event - The event to dispatch.
+ */
+- (void)dispatchEvent:(NSString*)event;
 
 @end
 
@@ -133,7 +166,7 @@ typedef void(^YBStateEventHandler)(YBStatechart *statechart);
     not been added as substate yet.
     @see -[YBState addSubstate:]
  */
-@property (nonatomic, readonly) YBState *superstate;
+@property (nonatomic, readonly, weak) YBState *superstate;
 
 /**
 	The initialSubstate is the substate that will be activated when the receiver is activated. In case there are no or one substates,
