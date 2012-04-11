@@ -139,8 +139,16 @@ typedef void(^YBStateEventHandler)(YBState *_self);
 /**
 	Makes the given state a substate of the receiver. This will automatically make the receiver the superstate of the given state.
 	@param substate - the state to add to as substate
+    @return Returns the receiver, to enable chaining-style programming
  */
-- (void)addSubstate:(YBState*)substate;
+- (YBState*)addSubstate:(YBState*)substate;
+
+/**
+    Convenience method to add multiple substates. Supply a nil terminated comma separated list of substates.
+    @see -addSubstate:
+    @return Returns the receiver, to enable chaining-style programming
+ */
+- (YBState*)addSubstates:(YBState *)substates, ... NS_REQUIRES_NIL_TERMINATION;
 
 /**
 	The name of the receiver as set in -initWithName: or +stateWithName:

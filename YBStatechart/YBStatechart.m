@@ -248,21 +248,34 @@ NSString *YBStateExitStateEvent = @"exitState";
     [_eventHandlers removeObjectForKey:event];
 }
 
-- (void)addSubstate:(YBState*)substate {
+- (YBState*)addSubstate:(YBState*)substate {
     if (substate == self) {
         // can't do recursion!
-        return;
+        return self;
     }
     if (substate->_superstate) {
         if (substate->_superstate != self) {
             // state is already a substate of another state
             [NSException raise:@"State is already a substate of another state" format:@"Superstate: %@", [substate->_superstate name]];
         }
-        return;
+        return self;
     }
     _substates = [_substates setByAddingObject:substate];
     substate->_superstate = self;
     [substate setStatechart:_statechart];
+    return self;
+}
+
+- (YBState*)addSubstates:(YBState *)substates, ... {
+    va_list list;
+    va_start(list, substates);
+    YBState *substate = substates;
+    do {
+        [self addSubstate:substate];
+        substate = va_arg(list, YBState*);
+    } while (substate);
+    va_end(list);
+    return self;
 }
 
 - (NSString*)path {
