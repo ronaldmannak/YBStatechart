@@ -202,8 +202,8 @@ typedef void(^YBStateEventHandler)(YBState *_self);
 
 /**
 	If substates are orthogonal (substatesAreOrthogonal is set to YES), they can be active/inactive independent of one another.
-    If they are not orthogonal (substatesAreOrthonogla is set to NO), only one of the substates is active at a time and the others
-    will be inactive.
+    If they are not orthogonal (substatesAreOrthonogal is set to NO), only one of the substates is active at a time and the others
+    will be inactive. Default to NO.
     @see -[YBStatechart activateState:] to activate a state in the statechart.
  */
 @property (nonatomic, assign) BOOL substatesAreOrthogonal;

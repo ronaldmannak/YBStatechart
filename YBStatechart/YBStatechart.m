@@ -79,9 +79,11 @@ NSString *YBStateExitStateEvent = @"exitState";
     if (valid)
 #endif
     {
-        [_rootState deactivate];
-        [_rootState deactivateSubstatesExcept:nil recursive:YES];
-        _isActive = NO;
+        if (_rootState->_active == YES) {
+            [_rootState deactivate];
+            [_rootState deactivateSubstatesExcept:nil recursive:YES];
+            _isActive = NO;
+        }
     }
 }
 
@@ -123,14 +125,23 @@ NSString *YBStateExitStateEvent = @"exitState";
 - (void)activateStateWithName:(NSString*)stateName saveToHistory:(BOOL)saveToHistory {
     YBState *state = [self findStateWithName:stateName];
     NSAssert(state != nil, @"Couldn't find state with name: %@", stateName);
+    if (state->_active) {
+        return;
+    }
     [self activateState:state saveToHistory:saveToHistory];
 }
 
 - (void)activateState:(YBState*)state {
+    if (state->_active) {
+        return;
+    }
     [self activateState:state saveToHistory:YES];
 }
 
 - (void)activateState:(YBState*)state saveToHistory:(BOOL)saveToHistory {
+    if (state->_active) {
+        return;
+    }
     // Traverse the graph down to the root of the tree:
     YBState *downState = state;
     while (downState != nil) {
@@ -446,7 +457,7 @@ NSString *YBStateExitStateEvent = @"exitState";
 }
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"<%@ %p: `%@`, %i substates, statechart=%p, superstate=%p, path=%@>", [self class], self, _name, [_substates count], _statechart, _superstate, [self path]];
+    return [NSString stringWithFormat:@"<%@ %p: `%@` (%@), %i substates, statechart=%p, superstate=%p, path=%@>", [self class], self, _name, _active ? @"active" : @"inactive", [_substates count], _statechart, _superstate, [self path]];
 }
 
 @synthesize name = _name;
