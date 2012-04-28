@@ -460,6 +460,7 @@ NSString *YBStateExitStateEvent = @"exitState";
     return [NSString stringWithFormat:@"<%@ %p: `%@` (%@), %i substates, statechart=%p, superstate=%p, path=%@>", [self class], self, _name, _active ? @"active" : @"inactive", [_substates count], _statechart, _superstate, [self path]];
 }
 
+@synthesize initialSubstate = _initialSubstate;
 @synthesize name = _name;
 @synthesize substates = _substates;
 @synthesize superstate = _superstate;

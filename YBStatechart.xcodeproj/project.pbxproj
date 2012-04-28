@@ -14,7 +14,7 @@
 		102591BB1521143200B11680 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 102591A91521143200B11680 /* Foundation.framework */; };
 		102591BE1521143200B11680 /* libYBStatechart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 102591A61521143200B11680 /* libYBStatechart.a */; };
 		102591C71521143200B11680 /* YBStatechartTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 102591C61521143200B11680 /* YBStatechartTests.m */; };
-		102591D41522A3FA00B11680 /* YBStatechart.h in Headers */ = {isa = PBXBuildFile; fileRef = 102591AE1521143200B11680 /* YBStatechart.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		102591D41522A3FA00B11680 /* YBStatechart.h in Headers */ = {isa = PBXBuildFile; fileRef = 102591AE1521143200B11680 /* YBStatechart.h */; settings = {ATTRIBUTES = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -319,6 +319,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/YBStatechart.dst;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "YBStatechart/YBStatechart-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
@@ -376,6 +377,7 @@
 				102591CC1521143200B11680 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		102591CD1521143200B11680 /* Build configuration list for PBXNativeTarget "YBStatechartTests" */ = {
 			isa = XCConfigurationList;
@@ -384,6 +386,7 @@
 				102591CF1521143200B11680 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
