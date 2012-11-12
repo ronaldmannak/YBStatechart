@@ -52,6 +52,13 @@ Example podfile:
 
 	pod 'YBLStatechart', '1.0.0'
 
+
+License
+-------
+YBLStatechart is licensed under the [Apache Software License, 2.0 ("Apache 2.0")][4]
+
+
 [1]: http://www.wisdom.weizmann.ac.il/~harel/SCANNED.PAPERS/Statecharts.pdf
 [2]: http://blog.sproutcore.com/statecharts-in-sproutcore/
 [3]: http://cocoapods.org
+[4]: http://www.apache.org/licenses/LICENSE-2.0

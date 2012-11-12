@@ -30,7 +30,6 @@
 /* Begin PBXFileReference section */
 		102591A61521143200B11680 /* libYBStatechart.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libYBStatechart.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		102591A91521143200B11680 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		102591AD1521143200B11680 /* YBStatechart-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "YBStatechart-Prefix.pch"; sourceTree = "<group>"; };
 		102591AE1521143200B11680 /* YBStatechart.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YBStatechart.h; sourceTree = "<group>"; };
 		102591AF1521143200B11680 /* YBStatechart.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YBStatechart.m; sourceTree = "<group>"; };
 		102591B61521143200B11680 /* YBStatechartTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YBStatechartTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -40,6 +39,7 @@
 		102591C51521143200B11680 /* YBStatechartTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YBStatechartTests.h; sourceTree = "<group>"; };
 		102591C61521143200B11680 /* YBStatechartTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YBStatechartTests.m; sourceTree = "<group>"; };
 		5262D63C1651980C008A3670 /* YBStatechart.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = YBStatechart.podspec; sourceTree = SOURCE_ROOT; };
+		5262D6521651C3A7008A3670 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,17 +99,9 @@
 			children = (
 				102591AE1521143200B11680 /* YBStatechart.h */,
 				102591AF1521143200B11680 /* YBStatechart.m */,
-				102591AC1521143200B11680 /* Supporting Files */,
+				5262D6501651C345008A3670 /* Supporting Files */,
 			);
 			path = YBStatechart;
-			sourceTree = "<group>";
-		};
-		102591AC1521143200B11680 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				102591AD1521143200B11680 /* YBStatechart-Prefix.pch */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		102591BF1521143200B11680 /* YBStatechartTests */ = {
@@ -125,8 +117,16 @@
 		102591C01521143200B11680 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				5262D63C1651980C008A3670 /* YBStatechart.podspec */,
 				102591C11521143200B11680 /* YBStatechartTests-Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5262D6501651C345008A3670 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5262D63C1651980C008A3670 /* YBStatechart.podspec */,
+				5262D6521651C3A7008A3670 /* LICENSE */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -310,7 +310,7 @@
 			buildSettings = {
 				DSTROOT = /tmp/YBStatechart.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "YBStatechart/YBStatechart-Prefix.pch";
+				GCC_PREFIX_HEADER = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "include/$(TARGET_NAME)";
@@ -322,9 +322,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/YBStatechart.dst;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "YBStatechart/YBStatechart-Prefix.pch";
+				GCC_PREFIX_HEADER = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "include/$(TARGET_NAME)";

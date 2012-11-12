@@ -240,7 +240,7 @@ NSString *YBStateExitStateEvent = @"exitState";
 - (void)on:(NSString*)event doBlock:(YBStateEventHandler)handler {
     NSParameterAssert(event != nil);
     if (handler) {
-        [_eventHandlers setObject:handler forKey:event];
+        [_eventHandlers setObject:[handler copy] forKey:event];
     } else {
         [self removeHandlerForEvent:event];
     }
