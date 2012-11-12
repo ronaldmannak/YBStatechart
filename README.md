@@ -44,5 +44,14 @@ This will call the block handlers associated with the named event `buttonPress`,
 
 For more useful examples, please read [David Harel's white paper] [1].
 
+Installation
+------------
+[CocoaPods][3] is the recommended way to install YBStatechart
+
+Example podfile:
+
+	pod 'YBLStatechart', '1.0.0'
+
 [1]: http://www.wisdom.weizmann.ac.il/~harel/SCANNED.PAPERS/Statecharts.pdf
 [2]: http://blog.sproutcore.com/statecharts-in-sproutcore/
+[3]: http://cocoapods.org

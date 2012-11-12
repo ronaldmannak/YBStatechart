@@ -39,6 +39,7 @@
 		102591C11521143200B11680 /* YBStatechartTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "YBStatechartTests-Info.plist"; sourceTree = "<group>"; };
 		102591C51521143200B11680 /* YBStatechartTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YBStatechartTests.h; sourceTree = "<group>"; };
 		102591C61521143200B11680 /* YBStatechartTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YBStatechartTests.m; sourceTree = "<group>"; };
+		5262D63C1651980C008A3670 /* YBStatechart.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = YBStatechart.podspec; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +125,7 @@
 		102591C01521143200B11680 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				5262D63C1651980C008A3670 /* YBStatechart.podspec */,
 				102591C11521143200B11680 /* YBStatechartTests-Info.plist */,
 			);
 			name = "Supporting Files";
