@@ -223,7 +223,7 @@ NSString *YBStateExitStateEvent = @"exitState";
             NSLog(@"No initial substate is set for state `%@` while there are multiple non-orthogonal substates.", _name);
             validates = NO;
         }
-        [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *substate, BOOL *stop) {
+        [_substates enumerateObjectsUsingBlock:^(YBState *substate, BOOL *stop) {
             if ([substate debugValidate] == NO) {
                 validates = NO;
             }
@@ -300,7 +300,7 @@ NSString *YBStateExitStateEvent = @"exitState";
 
 - (YBState*)substateWithName:(NSString*)stateName {
     __block YBState *foundSubstate = nil;
-    [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *substate, BOOL *stop) {
+    [_substates enumerateObjectsUsingBlock:^(YBState *substate, BOOL *stop) {
         if ([[substate name] isEqualToString:stateName]) {
             foundSubstate = substate;
             *stop = YES;
@@ -350,7 +350,7 @@ NSString *YBStateExitStateEvent = @"exitState";
 - (void)setStatechart:(YBStatechart*)statechart {
     _statechart = statechart;
     [_statechart registerState:self];
-    [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *substate, BOOL *stop) {
+    [_substates enumerateObjectsUsingBlock:^(YBState *substate, BOOL *stop) {
         [substate setStatechart:statechart];
     }];
 }
@@ -359,7 +359,7 @@ NSString *YBStateExitStateEvent = @"exitState";
     if ([_substates count] == 0) {
         return;
     } else {
-        [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *otherSubstate, BOOL *stop) {
+        [_substates enumerateObjectsUsingBlock:^(YBState *otherSubstate, BOOL *stop) {
             if (otherSubstate != exceptSubstate) {
                 [otherSubstate deactivate];
                 [otherSubstate deactivateSubstatesExcept:nil recursive:recursive];
@@ -390,7 +390,7 @@ NSString *YBStateExitStateEvent = @"exitState";
             }
         } else {
             // Activate all substates (they're orthogonal):
-            [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *substate, BOOL *stop) {
+            [_substates enumerateObjectsUsingBlock:^(YBState *substate, BOOL *stop) {
                 [self activateSubstate:substate saveToHistory:saveToHistory];
                 if (recursive) {
                     [substate activateDefaultSubstatesRecursive:recursive saveToHistory:saveToHistory];
@@ -420,7 +420,7 @@ NSString *YBStateExitStateEvent = @"exitState";
         return;
     } else {
         if (_substatesAreOrthogonal) {
-            [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *otherSubstate, BOOL *stop) {
+            [_substates enumerateObjectsUsingBlock:^(YBState *otherSubstate, BOOL *stop) {
                 [otherSubstate activate];
             }];
         } else {
@@ -441,7 +441,7 @@ NSString *YBStateExitStateEvent = @"exitState";
     } else if ([_substates count] == 1) {
         [[_substates anyObject] handleEventAndDispatchToActiveSubstates:event];
     } else {
-        [_substates enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *substate, BOOL *stop) {
+        [_substates enumerateObjectsUsingBlock:^(YBState *substate, BOOL *stop) {
             if (substate->_active) {
                 [substate handleEventAndDispatchToActiveSubstates:event];
             }
