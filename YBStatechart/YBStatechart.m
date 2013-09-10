@@ -38,7 +38,8 @@ NSString *YBStateExitStateEvent = @"exitState";
 - (void)activateSubstate:(YBState*)substate saveToHistory:(BOOL)saveToHistory;
 - (void)deactivate;
 - (void)deactivateSubstatesExcept:(YBState*)exceptSubstate recursive:(BOOL)recursive;
-- (void)handleEventAndDispatchToActiveSubstates:(NSString*)event;
+- (void)handleEvent:(NSString*)event;
+- (NSMutableArray*)collectActiveSubstates;
 #if DEBUG
 - (BOOL)debugValidate;
 #endif
@@ -158,7 +159,10 @@ NSString *YBStateExitStateEvent = @"exitState";
 
 - (void)dispatchEvent:(NSString*)event {
     NSAssert(_rootState != nil, @"No rootState set.");
-    [_rootState handleEventAndDispatchToActiveSubstates:event];
+    NSArray* activeSubstates = [_rootState collectActiveSubstates];
+    [activeSubstates enumerateObjectsUsingBlock:^(YBState* state, NSUInteger idx, BOOL *stop) {
+        [state handleEvent: event];
+    }];
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
@@ -433,20 +437,18 @@ NSString *YBStateExitStateEvent = @"exitState";
     }
 }
 
-- (void)handleEventAndDispatchToActiveSubstates:(NSString*)event {
-    [self handleEvent:event];
-    
-    if ([_substates count] == 0) {
-        return;
-    } else if ([_substates count] == 1) {
-        [[_substates anyObject] handleEventAndDispatchToActiveSubstates:event];
+- (NSMutableArray *)collectActiveSubstates {
+    NSMutableArray *activeSubstates = [[NSMutableArray alloc] initWithObjects: self, nil];
+    if ([_substates count] == 1) {
+        [activeSubstates addObjectsFromArray: [[_substates anyObject] collectActiveSubstates]];
     } else {
         [_substates enumerateObjectsUsingBlock:^(YBState *substate, BOOL *stop) {
             if (substate->_active) {
-                [substate handleEventAndDispatchToActiveSubstates:event];
+                [activeSubstates addObjectsFromArray: [substate collectActiveSubstates]];
             }
         }];
     }
+    return activeSubstates;
 }
 
 - (void)handleEvent:(NSString*)event {
