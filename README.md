@@ -50,7 +50,7 @@ Installation
 
 Example podfile:
 
-	pod 'YBLStatechart', '1.0.1'
+	pod 'YBStatechart', '1.0.1'
 
 
 License
