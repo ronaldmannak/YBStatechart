@@ -15,6 +15,7 @@
 		102591BE1521143200B11680 /* libYBStatechart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 102591A61521143200B11680 /* libYBStatechart.a */; };
 		102591C71521143200B11680 /* YBStatechartTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 102591C61521143200B11680 /* YBStatechartTests.m */; };
 		102591D41522A3FA00B11680 /* YBStatechart.h in Headers */ = {isa = PBXBuildFile; fileRef = 102591AE1521143200B11680 /* YBStatechart.h */; settings = {ATTRIBUTES = (); }; };
+		813FBBD919619B6D005E0811 /* YBStatechart-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 813FBBD819619B6D005E0811 /* YBStatechart-Prefix.pch */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,7 @@
 		102591C61521143200B11680 /* YBStatechartTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YBStatechartTests.m; sourceTree = "<group>"; };
 		5262D63C1651980C008A3670 /* YBStatechart.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = YBStatechart.podspec; sourceTree = SOURCE_ROOT; };
 		5262D6521651C3A7008A3670 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = SOURCE_ROOT; };
+		813FBBD819619B6D005E0811 /* YBStatechart-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "YBStatechart-Prefix.pch"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +129,7 @@
 			children = (
 				5262D63C1651980C008A3670 /* YBStatechart.podspec */,
 				5262D6521651C3A7008A3670 /* LICENSE */,
+				813FBBD819619B6D005E0811 /* YBStatechart-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -139,6 +142,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				102591D41522A3FA00B11680 /* YBStatechart.h in Headers */,
+				813FBBD919619B6D005E0811 /* YBStatechart-Prefix.pch in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,7 +192,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = YB;
-				LastUpgradeCheck = 0440;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = Yobble;
 			};
 			buildConfigurationList = 102591A01521143200B11680 /* Build configuration list for PBXProject "YBStatechart" */;
@@ -267,8 +271,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -279,10 +288,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -291,13 +304,21 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				SDKROOT = iphoneos;

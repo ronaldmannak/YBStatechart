@@ -200,7 +200,7 @@
     STAssertTrue(didButtonDown == NO, nil);
     YBStatechart *statechart = [[YBStatechart alloc] init];
     YBState *rootState = [YBState stateWithName:@"rootState"];
-    [rootState on:@"buttonDown" doBlock:^(YBState *_self) {
+    [rootState on:@"buttonDown" doBlock:^(YBState *_self , id payload) {
         didButtonDown = YES;
     }];
     
@@ -241,7 +241,7 @@
     [loggedIn on:@"up" doBlock:eventHandler];
     [loggedOut on:@"up" doBlock:eventHandler];
     
-    [rootState on:@"toggle" doBlock:^(YBState *_self) {
+    [rootState on:@"toggle" doBlock:^(YBState *_self , id payload) {
         YBStatechart *statechart = _self.statechart;
         if (loggedIn.isActive) {
             [statechart activateState:loggedOut];
