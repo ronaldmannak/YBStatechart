@@ -1,5 +1,7 @@
-YBStatechart
-============
+YBStatechart with Payloads
+==========================
+
+Fork of YBStateChart with the ability to dispatch payloads with events, also soon to come the ability to dispatch a payload with a state change.
 
 YBStatechart is a statechart framework. Statecharts are a formalized type of finite state machine, which resulted from [David Harel's research] [1] on software architecture design for aircraft systems in 1986. His [white paper article] [1] is well worth the (somewhat lengthy) read.
 
