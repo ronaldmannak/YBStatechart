@@ -19,7 +19,7 @@ extern NSString *YBStateExitStateEvent;
     The state object itself is passed to the block as the first argument.
 	@param _self : The state object to which the handler belongs.
  */
-typedef void(^YBStateEventHandler)(YBState *_self);
+typedef void(^YBStateEventHandler)(YBState *_self , id payload);
 
 
 
@@ -85,6 +85,15 @@ typedef void(^YBStateEventHandler)(YBState *_self);
 	@param event - The event to dispatch.
  */
 - (void)dispatchEvent:(NSString*)event;
+
+/**
+ Dispatches the given event to the active states in the statechart, causing the registered handlers to get called.
+ This method will also be called when an unknown message with no arguments and void return type is sent to a statechart, e.g.:
+ Sending [statechart buttonUp] will result in [statechart dispatchEvent:@"buttonUp"].
+ @param event - The event to dispatch.
+ @param payLoad - Payload to dispatch with the event for context.
+ */
+- (void)dispatchEvent:(NSString*)event withPayload:(id)payLoad;
 
 @end
 

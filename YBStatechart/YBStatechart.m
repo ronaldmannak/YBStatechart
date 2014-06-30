@@ -38,8 +38,7 @@ NSString *YBStateExitStateEvent = @"exitState";
 - (void)activateSubstate:(YBState*)substate saveToHistory:(BOOL)saveToHistory;
 - (void)deactivate;
 - (void)deactivateSubstatesExcept:(YBState*)exceptSubstate recursive:(BOOL)recursive;
-- (void)handleEvent:(NSString*)event;
-- (NSMutableArray*)collectActiveSubstates;
+- (void)handleEventAndDispatchToActiveSubstates:(NSString*)event withPayload:(id)payLoad;
 #if DEBUG
 - (BOOL)debugValidate;
 #endif
@@ -157,12 +156,14 @@ NSString *YBStateExitStateEvent = @"exitState";
     [state activateDefaultSubstatesRecursive:YES saveToHistory:saveToHistory];
 }
 
-- (void)dispatchEvent:(NSString*)event {
+- (void)dispatchEvent:(NSString*)event withPayload:(id)payLoad {
     NSAssert(_rootState != nil, @"No rootState set.");
-    NSArray* activeSubstates = [_rootState collectActiveSubstates];
-    [activeSubstates enumerateObjectsUsingBlock:^(YBState* state, NSUInteger idx, BOOL *stop) {
-        [state handleEvent: event];
-    }];
+    [_rootState handleEventAndDispatchToActiveSubstates:event withPayload:payLoad];
+}
+
+
+- (void)dispatchEvent:(NSString*)event {
+	[self dispatchEvent:event withPayload:nil];
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
@@ -407,14 +408,14 @@ NSString *YBStateExitStateEvent = @"exitState";
 - (void)deactivate {
     if (_active == YES) {
         _active = NO;
-        [self handleEvent:YBStateExitStateEvent];
+        [self handleEvent:YBStateExitStateEvent withPayload:nil];
     }
 }
 
 - (void)activate {
     if (_active == NO) {
         _active = YES;
-        [self handleEvent:YBStateEnterStateEvent];
+        [self handleEvent:YBStateEnterStateEvent withPayload:nil];
     }
 }
 
@@ -437,24 +438,26 @@ NSString *YBStateExitStateEvent = @"exitState";
     }
 }
 
-- (NSMutableArray *)collectActiveSubstates {
-    NSMutableArray *activeSubstates = [[NSMutableArray alloc] initWithObjects: self, nil];
-    if ([_substates count] == 1) {
-        [activeSubstates addObjectsFromArray: [[_substates anyObject] collectActiveSubstates]];
+- (void)handleEventAndDispatchToActiveSubstates:(NSString*)event withPayload:(id)payLoad {
+    [self handleEvent:event withPayload:payLoad];
+    
+    if ([_substates count] == 0) {
+        return;
+    } else if ([_substates count] == 1) {
+        [[_substates anyObject] handleEventAndDispatchToActiveSubstates:event withPayload:payLoad];
     } else {
         [_substates enumerateObjectsUsingBlock:^(YBState *substate, BOOL *stop) {
             if (substate->_active) {
-                [activeSubstates addObjectsFromArray: [substate collectActiveSubstates]];
+                [substate handleEventAndDispatchToActiveSubstates:event withPayload:payLoad];
             }
         }];
     }
-    return activeSubstates;
 }
 
-- (void)handleEvent:(NSString*)event {
+- (void)handleEvent:(NSString*)event withPayload:(id)payLoad {
     YBStateEventHandler handler = [_eventHandlers objectForKey:event];
     if (handler) {
-        handler(self);
+        handler(self,payLoad);
     }
 }
 
