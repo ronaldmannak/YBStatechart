@@ -33,9 +33,9 @@ NSString *YBStateExitStateEvent = @"exitState";
     BOOL _useHistory;
 }
 - (void)setStatechart:(YBStatechart*)statechart;
-- (void)activate;
-- (void)activateDefaultSubstatesRecursive:(BOOL)recursive saveToHistory:(BOOL)saveToHistory;
-- (void)activateSubstate:(YBState*)substate saveToHistory:(BOOL)saveToHistory;
+- (void)activate:(id)payload ;
+- (void)activateDefaultSubstatesRecursive:(BOOL)recursive saveToHistory:(BOOL)saveToHistory withPayload:(id)payload;
+- (void)activateSubstate:(YBState*)substate saveToHistory:(BOOL)saveToHistory withPayload:(id)payload ;
 - (void)deactivate;
 - (void)deactivateSubstatesExcept:(YBState*)exceptSubstate recursive:(BOOL)recursive;
 - (void)handleEventAndDispatchToActiveSubstates:(NSString*)event withPayload:(id)payLoad;
@@ -118,27 +118,47 @@ NSString *YBStateExitStateEvent = @"exitState";
     return [_registeredStates objectForKey:stateName];
 }
 
-- (void)activateStateWithName:(NSString*)stateName {
-    [self activateStateWithName:stateName saveToHistory:YES];
+
+- (void)activateStateWithName:(NSString*)stateName{
+	[self activateStateWithName:stateName withPayload:nil];
 }
 
-- (void)activateStateWithName:(NSString*)stateName saveToHistory:(BOOL)saveToHistory {
+
+- (void)activateStateWithName:(NSString*)stateName saveToHistory:(BOOL)saveToHistory{
+	[self activateStateWithName:stateName saveToHistory:saveToHistory withPayload:nil];
+}
+
+- (void)activateState:(YBState*)state{
+	[self activateState:state withPayload:nil];
+}
+
+
+- (void)activateState:(YBState*)state saveToHistory:(BOOL)saveToHistory{
+	[self activateState:state saveToHistory:saveToHistory withPayload:nil];
+}
+
+
+- (void)activateStateWithName:(NSString*)stateName withPayload:(id)payload{
+    [self activateStateWithName:stateName saveToHistory:YES withPayload:payload];
+}
+
+- (void)activateStateWithName:(NSString*)stateName saveToHistory:(BOOL)saveToHistory withPayload:(id)payload {
     YBState *state = [self findStateWithName:stateName];
     NSAssert(state != nil, @"Couldn't find state with name: %@", stateName);
     if (state->_active) {
         return;
     }
-    [self activateState:state saveToHistory:saveToHistory];
+    [self activateState:state saveToHistory:saveToHistory withPayload:payload];
 }
 
-- (void)activateState:(YBState*)state {
+- (void)activateState:(YBState*)state withPayload:(id)payload{
     if (state->_active) {
         return;
     }
-    [self activateState:state saveToHistory:YES];
+    [self activateState:state saveToHistory:YES withPayload:payload];
 }
 
-- (void)activateState:(YBState*)state saveToHistory:(BOOL)saveToHistory {
+- (void)activateState:(YBState*)state saveToHistory:(BOOL)saveToHistory withPayload:(id)payload {
     if (state->_active) {
         return;
     }
@@ -146,14 +166,15 @@ NSString *YBStateExitStateEvent = @"exitState";
     YBState *downState = state;
     while (downState != nil) {
         if (downState->_superstate) {
-            [downState->_superstate activateSubstate:downState saveToHistory:saveToHistory];
+            [downState->_superstate activateSubstate:downState saveToHistory:saveToHistory withPayload:payload
+			 ];
         } else { // rootState doesn't have a superstate
-            [downState activate];
+            [downState activate:payload];
         }
         downState = downState->_superstate;
     }
     // Traverse the graph up the leaves of the tree:
-    [state activateDefaultSubstatesRecursive:YES saveToHistory:saveToHistory];
+    [state activateDefaultSubstatesRecursive:YES saveToHistory:saveToHistory withPayload:payload];
 }
 
 - (void)dispatchEvent:(NSString*)event withPayload:(id)payLoad {
@@ -373,11 +394,11 @@ NSString *YBStateExitStateEvent = @"exitState";
     }
 }
 
-- (void)activateDefaultSubstatesRecursive:(BOOL)recursive saveToHistory:(BOOL)saveToHistory {
+- (void)activateDefaultSubstatesRecursive:(BOOL)recursive saveToHistory:(BOOL)saveToHistory withPayload:(id)payload {
     if ([_substates count] == 0) {
         return;
     } else if ([_substates count] == 1) {
-        [self activateSubstate:[_substates anyObject] saveToHistory:saveToHistory];
+        [self activateSubstate:[_substates anyObject] saveToHistory:saveToHistory withPayload:payload];
     } else {
         if (_substatesAreOrthogonal == NO) {
             // Figure out which substate to activate:
@@ -389,16 +410,16 @@ NSString *YBStateExitStateEvent = @"exitState";
                 defaultSubstate = [self initialSubstate];
                 NSAssert(defaultSubstate != nil, @"There is no initialSubstate set on `%@`. The statechart is not fully-defined!", _name);
             }
-            [self activateSubstate:defaultSubstate saveToHistory:saveToHistory];
+            [self activateSubstate:defaultSubstate saveToHistory:saveToHistory withPayload:payload];
             if (recursive) {
-                [defaultSubstate activateDefaultSubstatesRecursive:recursive saveToHistory:saveToHistory]; // recurse
+                [defaultSubstate activateDefaultSubstatesRecursive:recursive saveToHistory:saveToHistory withPayload:payload]; // recurse
             }
         } else {
             // Activate all substates (they're orthogonal):
             [_substates enumerateObjectsUsingBlock:^(YBState *substate, BOOL *stop) {
-                [self activateSubstate:substate saveToHistory:saveToHistory];
+                [self activateSubstate:substate saveToHistory:saveToHistory withPayload:payload];
                 if (recursive) {
-                    [substate activateDefaultSubstatesRecursive:recursive saveToHistory:saveToHistory];
+                    [substate activateDefaultSubstatesRecursive:recursive saveToHistory:saveToHistory withPayload:payload];
                 }
             }];
         }
@@ -412,28 +433,29 @@ NSString *YBStateExitStateEvent = @"exitState";
     }
 }
 
-- (void)activate {
+- (void)activate:(id)payload {
     if (_active == NO) {
         _active = YES;
-        [self handleEvent:YBStateEnterStateEvent withPayload:nil];
+        [self handleEvent:YBStateEnterStateEvent withPayload:payload];
     }
 }
 
-- (void)activateSubstate:(YBState*)substate saveToHistory:(BOOL)saveToHistory {
+
+- (void)activateSubstate:(YBState*)substate saveToHistory:(BOOL)saveToHistory withPayload:(id)payload {
     NSAssert([_substates containsObject:substate], @"State `%@` does not contain substate `%@`", _name, substate.name);
     if (substate->_active) {
         return;
     } else {
         if (_substatesAreOrthogonal) {
             [_substates enumerateObjectsUsingBlock:^(YBState *otherSubstate, BOOL *stop) {
-                [otherSubstate activate];
+                [otherSubstate activate:payload];
             }];
         } else {
             [self deactivateSubstatesExcept:substate recursive:YES];
             if (saveToHistory) {
                 [self setHistorySubstate:substate];
             }
-            [substate activate];
+            [substate activate:payload];
         }
     }
 }

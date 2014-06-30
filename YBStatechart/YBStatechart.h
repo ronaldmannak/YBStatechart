@@ -56,10 +56,17 @@ typedef void(^YBStateEventHandler)(YBState *_self , id payload);
     Methods to activate a given state in the statechart, either by passing in the state object itself or by passing in the name of the state.
     By default, automatic setting the historySubstate is enabled, but can be disabled using the saveToHistory argument.
  */
+
+
+
 - (void)activateStateWithName:(NSString*)stateName;
+- (void)activateStateWithName:(NSString*)stateName withPayload:(id)payload;
 - (void)activateStateWithName:(NSString*)stateName saveToHistory:(BOOL)saveToHistory;
+- (void)activateStateWithName:(NSString*)stateName saveToHistory:(BOOL)saveToHistory withPayload:(id)payload;
 - (void)activateState:(YBState*)state;
+- (void)activateState:(YBState*)state withPayload:(id)payload;
 - (void)activateState:(YBState*)state saveToHistory:(BOOL)saveToHistory;
+- (void)activateState:(YBState*)state saveToHistory:(BOOL)saveToHistory withPayload:(id)payload;
 
 /**
 	Activates the statechart. All initial and/or history substates will be entered/activated.
