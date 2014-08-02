@@ -272,11 +272,18 @@ NSString *YBStateExitStateEvent = @"exitState";
     }
 }
 
+#define LOG_DEBUG
 - (void)onEnterState:(YBStateEventHandler)handler {
+#ifdef LOG_DEBUG
+    NSLog(@">> %@",self.name);
+#endif
     [self on:YBStateEnterStateEvent doBlock:handler];
 }
 
 - (void)onExitState:(YBStateEventHandler)handler {
+#ifdef LOG_DEBUG
+    NSLog(@"<< %@",self.name);
+#endif
     [self on:YBStateExitStateEvent doBlock:handler];
 }
 
