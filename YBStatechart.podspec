@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "YBStatechart"
-  s.version      = "1.0.4"
+  s.version      = "1.0.5"
   s.summary      = "Framework for statecharts. A statecharts is a formalized type of finite state machine."
   s.homepage     = "https://github.com/ronaldmannak/YBStatechart"
   s.license      = 'Apache 2.0'

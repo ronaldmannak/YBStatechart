@@ -38,15 +38,12 @@ NSString *YBStateExitStateEvent = @"exitState";
 - (void)activateSubstate:(YBState*)substate saveToHistory:(BOOL)saveToHistory withPayload:(id)payload ;
 - (void)deactivate;
 - (void)deactivateSubstatesExcept:(YBState*)exceptSubstate recursive:(BOOL)recursive;
-- (void)handleEventAndDispatchToActiveSubstates:(NSString*)event withPayload:(id)payLoad;
+- (void)handleEvent:(NSString*)event withPayload:(id)payLoad;
+- (NSMutableArray*)collectActiveSubstates;
 #if DEBUG
 - (BOOL)debugValidate;
 #endif
 @end
-
-
-
-
 
 @implementation YBStatechart
 
@@ -177,14 +174,16 @@ NSString *YBStateExitStateEvent = @"exitState";
     [state activateDefaultSubstatesRecursive:YES saveToHistory:saveToHistory withPayload:payload];
 }
 
-- (void)dispatchEvent:(NSString*)event withPayload:(id)payLoad {
-    NSAssert(_rootState != nil, @"No rootState set.");
-    [_rootState handleEventAndDispatchToActiveSubstates:event withPayload:payLoad];
+- (void)dispatchEvent:(NSString*)event{
+    [self dispatchEvent:event withPayload:nil];
 }
 
-
-- (void)dispatchEvent:(NSString*)event {
-	[self dispatchEvent:event withPayload:nil];
+- (void)dispatchEvent:(NSString*)event withPayload:(id)payLoad {
+    NSAssert(_rootState != nil, @"No rootState set.");
+    NSArray* activeSubstates = [_rootState collectActiveSubstates];
+    [activeSubstates enumerateObjectsUsingBlock:^(YBState* state, NSUInteger idx, BOOL *stop) {
+        [state handleEvent:event withPayload:payLoad];
+    }];
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
@@ -467,20 +466,18 @@ NSString *YBStateExitStateEvent = @"exitState";
     }
 }
 
-- (void)handleEventAndDispatchToActiveSubstates:(NSString*)event withPayload:(id)payLoad {
-    [self handleEvent:event withPayload:payLoad];
-    
-    if ([_substates count] == 0) {
-        return;
-    } else if ([_substates count] == 1) {
-        [[_substates anyObject] handleEventAndDispatchToActiveSubstates:event withPayload:payLoad];
+- (NSMutableArray *)collectActiveSubstates {
+    NSMutableArray *activeSubstates = [[NSMutableArray alloc] initWithObjects: self, nil];
+    if ([_substates count] == 1) {
+        [activeSubstates addObjectsFromArray: [[_substates anyObject] collectActiveSubstates]];
     } else {
         [_substates enumerateObjectsUsingBlock:^(YBState *substate, BOOL *stop) {
             if (substate->_active) {
-                [substate handleEventAndDispatchToActiveSubstates:event withPayload:payLoad];
+                [activeSubstates addObjectsFromArray: [substate collectActiveSubstates]];
             }
         }];
     }
+    return activeSubstates;
 }
 
 - (void)handleEvent:(NSString*)event withPayload:(id)payLoad {
@@ -491,7 +488,7 @@ NSString *YBStateExitStateEvent = @"exitState";
 }
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"<%@ %p: `%@` (%@), %i substates, statechart=%p, superstate=%p, path=%@>", [self class], self, _name, _active ? @"active" : @"inactive", [_substates count], _statechart, _superstate, [self path]];
+    return [NSString stringWithFormat:@"<%@ %p: `%@` (%@), %lu substates, statechart=%p, superstate=%p, path=%@>", [self class], self, _name, _active ? @"active" : @"inactive", (unsigned long)[_substates count], _statechart, _superstate, [self path]];
 }
 
 @synthesize initialSubstate = _initialSubstate;
