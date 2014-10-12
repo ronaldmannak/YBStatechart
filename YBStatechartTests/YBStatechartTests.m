@@ -15,8 +15,8 @@
     YBState *superstate = [YBState stateWithName:@"superState"];
     YBState *substate = [YBState stateWithName:@"subState"];
     [superstate addSubstate:substate];
-    STAssertTrue([[superstate substates] containsObject:substate] == YES, nil);
-    STAssertTrue([substate superstate] == superstate,  nil);
+    XCTAssertTrue([[superstate substates] containsObject:substate] == YES);
+    XCTAssertTrue([substate superstate] == superstate);
 }
 
 - (void)testSetRootstateAndAutomaticStatechartPropertyAssignment {
@@ -31,9 +31,9 @@
     [statechart setRootState:superstate];
     
     YBState *rootState = [statechart rootState];
-    STAssertTrue(rootState == superstate, nil);
+    XCTAssertTrue(rootState == superstate);
     [[rootState substates] enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(YBState *substate, BOOL *stop) {
-        STAssertTrue([substate statechart] == statechart, nil);
+        XCTAssertTrue([substate statechart] == statechart);
     }];
 }
 
@@ -43,54 +43,54 @@
     YBState *substate = [YBState stateWithName:@"subState"];
     [statechart setRootState:superstate];
     [superstate addSubstate:substate];
-    STAssertTrue([substate statechart] == statechart, nil);
+    XCTAssertTrue([substate statechart] == statechart);
 }
 
 - (void)testImplicitAddingWhenSettingInitialSubstate {
     YBState *superstate = [YBState stateWithName:@"superstate"];
     YBState *substate = [YBState stateWithName:@"substate"];
     superstate.initialSubstate = substate;
-    STAssertTrue([[superstate substates] containsObject:substate], @"initialSubstate setter is expected to implicitely add the assigned state as substate");
+    XCTAssertTrue([[superstate substates] containsObject:substate], @"initialSubstate setter is expected to implicitely add the assigned state as substate");
 }
 
 - (void)testImplicitAddingWhenSettingHistorySubstate {
     YBState *superstate = [YBState stateWithName:@"superstate"];
     YBState *substate = [YBState stateWithName:@"substate"];
     superstate.historySubstate = substate;
-    STAssertTrue([[superstate substates] containsObject:substate], @"historySubstate setter is expected to implicitely add the assigned state as substate");
+    XCTAssertTrue([[superstate substates] containsObject:substate], @"historySubstate setter is expected to implicitely add the assigned state as substate");
 }
 
 - (void)testHistorySubstate {
     YBState *superstate = [YBState stateWithName:@"superstate"];
     YBState *substate = [YBState stateWithName:@"substate"];
     superstate.historySubstate = substate;
-    STAssertTrue(superstate.historySubstate == substate, nil);
+    XCTAssertTrue(superstate.historySubstate == substate);
     superstate.historySubstate = nil;
-    STAssertTrue(superstate.historySubstate == nil, nil);
+    XCTAssertTrue(superstate.historySubstate == nil);
 }
 
 - (void)testInitialSubstate {
     YBState *superstate = [YBState stateWithName:@"superstate"];
     YBState *substate = [YBState stateWithName:@"substate"];
     superstate.initialSubstate = substate;
-    STAssertTrue(superstate.initialSubstate == substate, nil);
+    XCTAssertTrue(superstate.initialSubstate == substate);
     superstate.initialSubstate = nil;
-    STAssertTrue(superstate.initialSubstate == nil, nil);
+    XCTAssertTrue(superstate.initialSubstate == nil);
 }
 
 - (void)testDisallowRecursion {
     YBState *superstate = [YBState stateWithName:@"superstate"];
     [superstate addSubstate:superstate];
-    STAssertTrue([[superstate substates] containsObject:superstate] == NO, nil);
+    XCTAssertTrue([[superstate substates] containsObject:superstate] == NO);
     superstate.initialSubstate = superstate;
-    STAssertTrue(superstate.initialSubstate == nil, nil);
+    XCTAssertTrue(superstate.initialSubstate == nil);
     superstate.historySubstate = superstate;
-    STAssertTrue(superstate.historySubstate == nil, nil);
+    XCTAssertTrue(superstate.historySubstate == nil);
 }
 
 - (void)testActivatingStates {
     YBStatechart *statechart = [[YBStatechart alloc] init];
-    STAssertTrue([statechart debugValidate] == NO, nil);
+    XCTAssertTrue([statechart debugValidate] == NO);
 
     // State 1 has 2 substates + history:
     YBState *substate1 = [YBState stateWithName:@"1"];
@@ -121,83 +121,83 @@
     [statechart setRootState:rootState];
     
     // Set initialSubstates and validate the chart in between:
-    STAssertTrue([statechart debugValidate] == NO, nil);
+    XCTAssertTrue([statechart debugValidate] == NO);
     rootState.initialSubstate = substate1;
-    STAssertTrue([statechart debugValidate] == NO, nil);
+    XCTAssertTrue([statechart debugValidate] == NO);
     substate1.initialSubstate = substate1_1;
-    STAssertTrue([statechart debugValidate] == NO, nil);
+    XCTAssertTrue([statechart debugValidate] == NO);
     substate2_2.initialSubstate = substate2_2_1;
-    STAssertTrue([statechart debugValidate] == YES, nil);
+    XCTAssertTrue([statechart debugValidate] == YES);
     
     // Test initial activations:
     [statechart activate];
-    STAssertTrue(rootState.isActive == YES, nil);
-    STAssertTrue(statechart.isActive == YES, nil);
-    STAssertTrue(substate1.isActive == YES, nil);
-    STAssertTrue(substate1_1.isActive == YES, nil);
+    XCTAssertTrue(rootState.isActive == YES);
+    XCTAssertTrue(statechart.isActive == YES);
+    XCTAssertTrue(substate1.isActive == YES);
+    XCTAssertTrue(substate1_1.isActive == YES);
 
-    STAssertTrue(substate1_2.isActive == NO, nil);
-    STAssertTrue(substate2.isActive == NO, nil);
-    STAssertTrue(substate2_1.isActive == NO, nil);
-    STAssertTrue(substate2_2.isActive == NO, nil);
-    STAssertTrue(substate2_2_1.isActive == NO, nil);
-    STAssertTrue(substate2_2_2.isActive == NO, nil);
+    XCTAssertTrue(substate1_2.isActive == NO);
+    XCTAssertTrue(substate2.isActive == NO);
+    XCTAssertTrue(substate2_1.isActive == NO);
+    XCTAssertTrue(substate2_2.isActive == NO);
+    XCTAssertTrue(substate2_2_1.isActive == NO);
+    XCTAssertTrue(substate2_2_2.isActive == NO);
     
     // Test leaf state change:
     [statechart activateState:substate1_2];
-    STAssertTrue(statechart.isActive == YES, nil);
-    STAssertTrue(substate1.isActive == YES, nil);
-    STAssertTrue(substate1_2.isActive == YES, nil);
+    XCTAssertTrue(statechart.isActive == YES);
+    XCTAssertTrue(substate1.isActive == YES);
+    XCTAssertTrue(substate1_2.isActive == YES);
     
-    STAssertTrue(substate1_1.isActive == NO, nil);
-    STAssertTrue(substate2.isActive == NO, nil);
-    STAssertTrue(substate2_1.isActive == NO, nil);
-    STAssertTrue(substate2_2.isActive == NO, nil);
-    STAssertTrue(substate2_2_1.isActive == NO, nil);
-    STAssertTrue(substate2_2_2.isActive == NO, nil);
+    XCTAssertTrue(substate1_1.isActive == NO);
+    XCTAssertTrue(substate2.isActive == NO);
+    XCTAssertTrue(substate2_1.isActive == NO);
+    XCTAssertTrue(substate2_2.isActive == NO);
+    XCTAssertTrue(substate2_2_1.isActive == NO);
+    XCTAssertTrue(substate2_2_2.isActive == NO);
     
     // Test activating orthogonal substates:
     [statechart activateStateWithName:@"2"];
-    STAssertTrue(statechart.isActive == YES, nil);
-    STAssertTrue(substate2.isActive == YES, nil);
-    STAssertTrue(substate2_1.isActive == YES, nil);
-    STAssertTrue(substate2_2.isActive == YES, nil);
-    STAssertTrue(substate2_2_1.isActive == YES, nil);
+    XCTAssertTrue(statechart.isActive == YES);
+    XCTAssertTrue(substate2.isActive == YES);
+    XCTAssertTrue(substate2_1.isActive == YES);
+    XCTAssertTrue(substate2_2.isActive == YES);
+    XCTAssertTrue(substate2_2_1.isActive == YES);
     
-    STAssertTrue(substate1.isActive == NO, nil);
-    STAssertTrue(substate1_1.isActive == NO, nil);
-    STAssertTrue(substate1_2.isActive == NO, nil);
-    STAssertTrue(substate2_2_2.isActive == NO, nil);
+    XCTAssertTrue(substate1.isActive == NO);
+    XCTAssertTrue(substate1_1.isActive == NO);
+    XCTAssertTrue(substate1_2.isActive == NO);
+    XCTAssertTrue(substate2_2_2.isActive == NO);
     
     // Testing leaf state change:
     [statechart activateState:substate2_2_2];
-    STAssertTrue(statechart.isActive == YES, nil);
-    STAssertTrue(substate2.isActive == YES, nil);
-    STAssertTrue(substate2_1.isActive == YES, nil);
-    STAssertTrue(substate2_2.isActive == YES, nil);
-    STAssertTrue(substate2_2_2.isActive == YES, nil);
+    XCTAssertTrue(statechart.isActive == YES);
+    XCTAssertTrue(substate2.isActive == YES);
+    XCTAssertTrue(substate2_1.isActive == YES);
+    XCTAssertTrue(substate2_2.isActive == YES);
+    XCTAssertTrue(substate2_2_2.isActive == YES);
     
-    STAssertTrue(substate1.isActive == NO, nil);
-    STAssertTrue(substate1_1.isActive == NO, nil);
-    STAssertTrue(substate1_2.isActive == NO, nil);
-    STAssertTrue(substate2_2_1.isActive == NO, nil);
+    XCTAssertTrue(substate1.isActive == NO);
+    XCTAssertTrue(substate1_1.isActive == NO);
+    XCTAssertTrue(substate1_2.isActive == NO);
+    XCTAssertTrue(substate2_2_1.isActive == NO);
     
     // Testing reverting to history of state1_2:
     [statechart activateState:substate1];
-    STAssertTrue(substate1.isActive == YES, nil);
-    STAssertTrue(substate1_2.isActive == YES, nil);
+    XCTAssertTrue(substate1.isActive == YES);
+    XCTAssertTrue(substate1_2.isActive == YES);
     
-    STAssertTrue(substate1_1.isActive == NO, nil);
-    STAssertTrue(substate2.isActive == NO, nil);
-    STAssertTrue(substate2_1.isActive == NO, nil);
-    STAssertTrue(substate2_2.isActive == NO, nil);
-    STAssertTrue(substate2_2_1.isActive == NO, nil);
-    STAssertTrue(substate2_2_2.isActive == NO, nil);
+    XCTAssertTrue(substate1_1.isActive == NO);
+    XCTAssertTrue(substate2.isActive == NO);
+    XCTAssertTrue(substate2_1.isActive == NO);
+    XCTAssertTrue(substate2_2.isActive == NO);
+    XCTAssertTrue(substate2_2_1.isActive == NO);
+    XCTAssertTrue(substate2_2_2.isActive == NO);
 }
 
 - (void)testChartDispatchDirect {
     __block BOOL didButtonDown = NO;
-    STAssertTrue(didButtonDown == NO, nil);
+    XCTAssertTrue(didButtonDown == NO);
     YBStatechart *statechart = [[YBStatechart alloc] init];
     YBState *rootState = [YBState stateWithName:@"rootState"];
     [rootState on:@"buttonDown" doBlock:^(YBState *_self) {
@@ -206,7 +206,7 @@
     
     [statechart setRootState:rootState];
     [statechart performSelector:@selector(buttonDown)];
-    STAssertTrue(didButtonDown == YES, nil);
+    XCTAssertTrue(didButtonDown == YES);
 }
 
 - (void)testNestedDispatch {
@@ -258,25 +258,25 @@
     statechart.rootState = rootState;
     [statechart activate];
     
-    STAssertTrue([enterSet containsObject:rootState] == YES, nil);
-    STAssertTrue([enterSet containsObject:loggedOut] == YES, nil); // initial substate of rootState
-    STAssertTrue([enterSet containsObject:loggedIn] == NO, nil);
-    STAssertTrue([exitSet count] == 0, nil);
+    XCTAssertTrue([enterSet containsObject:rootState] == YES);
+    XCTAssertTrue([enterSet containsObject:loggedOut] == YES); // initial substate of rootState
+    XCTAssertTrue([enterSet containsObject:loggedIn] == NO);
+    XCTAssertTrue([exitSet count] == 0);
     
     [statechart performSelector:@selector(up)];
-    STAssertTrue([eventSet containsObject:rootState] == YES, nil);
-    STAssertTrue([eventSet containsObject:loggedOut] == YES, nil);
-    STAssertTrue([eventSet containsObject:loggedIn] == NO, nil);
+    XCTAssertTrue([eventSet containsObject:rootState] == YES);
+    XCTAssertTrue([eventSet containsObject:loggedOut] == YES);
+    XCTAssertTrue([eventSet containsObject:loggedIn] == NO);
 
     [statechart performSelector:@selector(toggle)];
-    STAssertTrue([enterSet containsObject:loggedIn] == YES, nil);
-    STAssertTrue([exitSet containsObject:loggedOut] == YES, nil);
+    XCTAssertTrue([enterSet containsObject:loggedIn] == YES);
+    XCTAssertTrue([exitSet containsObject:loggedOut] == YES);
 
     [statechart performSelector:@selector(up)];
-    STAssertTrue([eventSet containsObject:loggedIn] == YES, nil);
+    XCTAssertTrue([eventSet containsObject:loggedIn] == YES);
     
     [statechart deactivate];
-    STAssertTrue([exitSet count] == 3, nil);
+    XCTAssertTrue([exitSet count] == 3);
     
     // Break retain cycles (the states are retained by the sets, which are used/retained inside the handlers blocks, which are retained by the states):
     [enterSet removeAllObjects];

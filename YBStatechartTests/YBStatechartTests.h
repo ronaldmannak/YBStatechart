@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Yobble. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
-@interface YBStatechartTests : SenTestCase
+@interface YBStatechartTests : XCTestCase
 
 @end
