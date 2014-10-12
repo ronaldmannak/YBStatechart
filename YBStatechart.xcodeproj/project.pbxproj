@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		102591AA1521143200B11680 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 102591A91521143200B11680 /* Foundation.framework */; };
 		102591B01521143200B11680 /* YBStatechart.m in Sources */ = {isa = PBXBuildFile; fileRef = 102591AF1521143200B11680 /* YBStatechart.m */; };
-		102591B81521143200B11680 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 102591B71521143200B11680 /* SenTestingKit.framework */; };
 		102591BA1521143200B11680 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 102591B91521143200B11680 /* UIKit.framework */; };
 		102591BB1521143200B11680 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 102591A91521143200B11680 /* Foundation.framework */; };
 		102591BE1521143200B11680 /* libYBStatechart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 102591A61521143200B11680 /* libYBStatechart.a */; };
@@ -33,7 +32,6 @@
 		102591AE1521143200B11680 /* YBStatechart.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YBStatechart.h; sourceTree = "<group>"; };
 		102591AF1521143200B11680 /* YBStatechart.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YBStatechart.m; sourceTree = "<group>"; };
 		102591B61521143200B11680 /* YBStatechartTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YBStatechartTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		102591B71521143200B11680 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		102591B91521143200B11680 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		102591C11521143200B11680 /* YBStatechartTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "YBStatechartTests-Info.plist"; sourceTree = "<group>"; };
 		102591C51521143200B11680 /* YBStatechartTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YBStatechartTests.h; sourceTree = "<group>"; };
@@ -55,7 +53,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				102591B81521143200B11680 /* SenTestingKit.framework in Frameworks */,
 				102591BA1521143200B11680 /* UIKit.framework in Frameworks */,
 				102591BB1521143200B11680 /* Foundation.framework in Frameworks */,
 				102591BE1521143200B11680 /* libYBStatechart.a in Frameworks */,
@@ -88,7 +85,6 @@
 			isa = PBXGroup;
 			children = (
 				102591A91521143200B11680 /* Foundation.framework */,
-				102591B71521143200B11680 /* SenTestingKit.framework */,
 				102591B91521143200B11680 /* UIKit.framework */,
 			);
 			name = Frameworks;
@@ -179,7 +175,7 @@
 			name = YBStatechartTests;
 			productName = YBStatechartTests;
 			productReference = 102591B61521143200B11680 /* YBStatechartTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -188,7 +184,8 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = YB;
-				LastUpgradeCheck = 0440;
+				LastTestingUpgradeCheck = 0600;
+				LastUpgradeCheck = 0600;
 				ORGANIZATIONNAME = Yobble;
 			};
 			buildConfigurationList = 102591A01521143200B11680 /* Build configuration list for PBXProject "YBStatechart" */;
@@ -267,9 +264,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -279,10 +283,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -291,13 +299,23 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				SDKROOT = iphoneos;
@@ -337,13 +355,10 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(inherited)",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "YBStatechart/YBStatechart-Prefix.pch";
 				INFOPLIST_FILE = "YBStatechartTests/YBStatechartTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
@@ -352,13 +367,10 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(inherited)",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "YBStatechart/YBStatechart-Prefix.pch";
 				INFOPLIST_FILE = "YBStatechartTests/YBStatechartTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
